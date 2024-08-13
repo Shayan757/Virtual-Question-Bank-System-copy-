@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["Files/Admin/*"]
+    }
+  },
+  "include": ["pages/**/*", "Files/**/*"]
+}
