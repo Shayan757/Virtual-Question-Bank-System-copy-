@@ -1,18 +1,18 @@
 // pages/admin/questions.js
 import Sidebar from '../../Files/Admin/Sidebar';
 import Header from '../../Files/Admin/Header';
-import SimpleTest from '../../Files/Admin/SimpleTest';
+import Logout from '../../Files/Admin/Logouts';
 
-const simpleTest = () => {
+const logout = () => {
     return (
         <div className="flex min-h-screen">
             <Sidebar />
             <div className="flex-grow p-4">
                 <Header />
-                <SimpleTest />
+                <Logout/>
             </div>
         </div>
     );
 };
 
-export default simpleTest;
+export default logout;

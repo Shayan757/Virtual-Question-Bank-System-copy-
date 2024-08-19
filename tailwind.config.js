@@ -7,7 +7,9 @@ module.exports = {
     // './app/**/*.{js,jsx}',
     // './src/**/*.{js,jsx}',
 
-    './Files/Admin/**/*.{js,jsx}'
+    './Files/Admin/**/*.{js,jsx}',
+
+    './Files/Files/**/*.{js,jsx}'
   ],
   prefix: "",
   theme: {

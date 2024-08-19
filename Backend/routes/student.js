@@ -15,7 +15,7 @@ router.post("/register",[
 
     
  
-    body("name" , "Enter a valid name").isLength({min:5}),
+    body("name" , "Enter a valid name").isLength({min:3}),
     body("email" , "Enter a valid email").isEmail(),
     body("password" , "Enter a valid password").isLength({min:5})
 
@@ -158,87 +158,74 @@ router.post("/login",[
 
 // get user //
 
-router.get("/getuser", fetchuser, async(req,res)=>{
-
-
-
+router.get("/getuser", fetchuser, async(req,res) => {
   try {
+    // Check if the logged-in user is an admin
+    // if (req.user.roles !== 'admin') {
+    //   return res.status(403).json({ error: 'Access denied: Admins only' });
+    // }
 
-    userId = req.user.id
+    // Fetch all users from the database, excluding passwords
+    let users = await UserModel.find().select('-password');  
 
-    let user = await UserModel.findById(userId).select('-password')  
-
-    res.send (user)
-      
+    res.status(200).json(users);
   } catch (error) {
-
-    console.error(error.message)
-
-    return res.status(500).send("Internel server error")
-
-      
+    console.error(error.message);
+    return res.status(500).send("Internal server error");
   }
-
-  
-
 });
+
 
 
 // User update //
 
 
-router.put("/updateUser/:id", [
+router.put('/updateUser/:id', [
+  body("name", "Enter a valid name").isLength({ min: 3 }),
+  body("email", "Enter a valid email").isEmail(),
+  body("password", "Enter a valid password").isLength({ min: 5 })
+], async (req, res) => {
 
-  body("name" , "Enter a valid name").isLength({min:5}),
-  body("email" , "Enter a valid email").isEmail(),
-  body("password", "Enter a valid password").isLength({min:5})
-
-
-], async(req,res)=>{
-
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-      return res.status(400).json({ errors: error.array() });
+  let success = false;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
   try {
+    const { id } = req.params;
+    const { name, email, password, roles } = req.body;
 
-    const { name, email, password } = req.body;
-
-    if ( !name || !email || !password) {
-        return res.status(400).json("Send all required fields: title, author, publishYear, imagePath, price");
+    // Find the user by ID
+    let user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    const userId = req.params.id;
+    // Authorization check
+    // if (user.id !== req.user.id && req.user.roles !== 'admin') {
+    //   return res.status(403).json("Not allowed to update this account");
+    // }
 
-    const updatedUser = {}
-
-    let existingUser = await UserModel.findById(userId);
-
-    if (!existingUser) {
-        return res.status(404).json("User not found");
+    // Update user fields
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
     }
+    if (roles) user.roles = roles;
 
+    // Save the updated user
+    await user.save();
 
-  if  (name)  {updatedUser.name = name}
-  if  (email)  {updatedUser.email = email}
-  if  (password)  {updatedUser.password = password}
-  
-    existingUser = await UserModel.findByIdAndUpdate(userId,{$set: updatedUser , new:true})
+    success = true;
+    res.json({ success, user });
 
-    res.json({existingUser}); 
-      
   } catch (error) {
-
-    console.error(error.message)
-
-    return res.status(500).send("Internel server error")
-
-      
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
-
-  
-
 });
 
 
@@ -254,6 +241,11 @@ router.delete("/deleteUser/:id", async(req,res)=>{
     
 
     const userId = req.params.id;
+
+     
+    // if (req.user.id !== userId && req.user.roles !== roles.admin) {
+    //   return res.status(403).json("Access denied: You can only delete your own account");
+    // }
 
     
 
@@ -280,6 +272,28 @@ router.delete("/deleteUser/:id", async(req,res)=>{
   
 
 });
+
+
+// Get user activity log
+router.get('/userActivity/:id', fetchuser, async (req, res) => {
+  try {
+    // Check if the logged-in user is an admin
+    if (req.user.roles !== roles.admin) {
+      return res.status(403).json({ error: 'Access denied: Admins only' });
+    }
+
+    const user = await UserModel.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return the activity log of the user
+    res.status(200).json(user.activityLog);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 

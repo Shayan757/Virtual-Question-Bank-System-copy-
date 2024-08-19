@@ -60,7 +60,13 @@ router.post('/CreateQuestion', fetchuser, [
  
 const savedQuestion = await Question.save()
 
-res.json(savedQuestion);
+
+const response = savedQuestion.toObject();
+// Remove the 'option' field if the question type is 'descriptive'
+if (response.type === 'descriptive') {
+  delete response.option;
+}
+res.json(response);
 
 
   } catch (error) {
