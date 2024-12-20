@@ -15,6 +15,9 @@ try {
 
  const data = jwt.verify(token,process.env.JWT_SECRET)
 
+//  console.log("Fetching sessions for User ID:", data.user.id);
+
+
 req.user = data.user;
 
 next();

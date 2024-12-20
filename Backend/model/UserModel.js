@@ -1,46 +1,64 @@
+
+
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const {roles} = require("../utils/constant")
+const { roles } = require("../utils/constant");
 
 const UserSchema = new Schema({
   name: {
-    
-   type : String,
-   required : true
-
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  roles: {
+    type: String,
+    enum: [roles.admin, roles.student],
+    default: roles.student
+  },
+  date: { 
+    type: Date, 
+    default: Date.now 
+  },
+  profilePicture: {
+    type: String,
+    default: ''
   },
 
-  email: {
-    
-    type : String,
-    required : true,
-    unique : true
- 
-   },
+  username: {
 
-
-   password: {
-    
-    type : String,
-    required : true
- 
-   },
-
-   roles : {
-
-    type : String,
-
-    enum : [roles.admin , roles.student],
-
-    default : roles.student
-
-   },
-
-  date: { type: Date, default: Date.now },
-  hidden: Boolean,
-  
+    type:String,
+    default:''
+  },
+  phoneNumber: {
+    type: String,
+    default: ''
+  },
+  dateOfBirth: {
+    type: Date,
+    default: null
+  },
+  institution: {
+    type: String,
+    default: ''
+  },
+  gradeYear: {
+    type: String,
+    default: ''
+  },
+  subjectsOfInterest: {
+    type: [String],
+    default: []
+  }
 });
 
-const user = mongoose.model('User', UserSchema);
+const user = mongoose.model('user', UserSchema);
 
-module.exports = user
+module.exports = user;
