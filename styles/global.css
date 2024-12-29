@@ -29,6 +29,13 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --red: 0 84.2% 60.2%;
+    --red-foreground: 0 0% 100%;
+    --orange: 29 100% 56.1%;
+    --orange-foreground: 0 0% 100%;
+    --green: 120 100% 40%;
+    --green-foreground: 0 0% 100%;
+
   }
 
   .dark {
@@ -56,6 +63,12 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --red: 0 62.8% 30.6%;
+    --red-foreground: 0 0% 100%;
+    --orange: 29 80% 50%;
+    --orange-foreground: 0 0% 100%;
+    --green: 120 70% 35%;
+    --green-foreground: 0 0% 100%;
   }
 }
 
@@ -67,3 +80,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: black; }
+}
+
+.typing-effect {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid black;
+  animation: 
+    typing 4s steps(30, end) forwards,          /* Typing effect */
+    blink-caret 0.75s step-end 5 forwards;      /* 5 blinks, then stop */
+  width: 100%; /* Ensures full width for the typing effect */
+}
+
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+ } 
+
+/* Hide scrollbar for specific class */
+/* .hide-scrollbar {
+  overflow-y: hidden; */
+  /* -ms-overflow-style: none; */
+  /* scrollbar-width: none; Firefox */
+/* } */

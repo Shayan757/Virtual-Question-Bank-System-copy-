@@ -1,4 +1,6 @@
 
+'use client'
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from "@/Files/Admin/ui/button";
@@ -34,7 +36,7 @@ const RegisterForm = () => {
       });
 
       const json = await response.json();
-      console.log("Response from server:", json);
+      
 
       if (json.success) {
         localStorage.setItem("token", json.authtoken);
@@ -51,7 +53,7 @@ const RegisterForm = () => {
       } else {
         setError(json.message || "Registration failed");
         
-        console.log("Registration failed:", json.message);
+      
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -67,7 +69,7 @@ const RegisterForm = () => {
 
   return (
     <div className='flex justify-center items-center min-h-screen'>
-    <Card className="mx-auto w-96 bg-gray-800 border-none">
+    <Card className="mx-auto w-96 bg-indigo-500 border-none">
       <CardHeader>
         <CardTitle className="text-2xl text-white">Register</CardTitle>
         <CardDescription className="mt-4 text-white">Create a new account to get started.</CardDescription>

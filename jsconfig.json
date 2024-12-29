@@ -1,9 +1,13 @@
+
+
 {
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@components/*": ["Files/Admin/*"]
-    }
+    },
+    "lib": ["es6", "dom"]
   },
-  "include": ["pages/**/*", "Files/**/*"]
+  "include": ["pages/**/*", "Files/**/*"],
+  "exclude": ["node_modules", "**/node_modules/*", "stylis"]
 }

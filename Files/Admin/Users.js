@@ -1,11 +1,12 @@
 
-
-
-
+'use client'
 
 import { useContext, useEffect, useState } from 'react';
 import AdminContext from '../../Context/AdminContext';
-import { TrashIcon, Pencil1Icon } from '@radix-ui/react-icons'; // Import icons
+import Spinner from "../Student/loader"
+import { Pencil } from 'lucide-react';
+import { Trash } from 'lucide-react';
+
 
 
 const Modal = ({ isOpen, onClose, onSave, user }) => {
@@ -55,13 +56,26 @@ const Modal = ({ isOpen, onClose, onSave, user }) => {
 };
 
 const Users = () => {
-    const { users, fetchUsers, updateUsers, deleteUsers, fetchUserActivity } = useContext(AdminContext);
+    const { users, fetchUsers, updateUsers, deleteUsers, } = useContext(AdminContext);
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         fetchUsers();
     }, []);
+
+    useEffect(() => {
+        // Set the spinner to hide after 5 seconds
+        const timer = setTimeout(() => {
+          setLoading(false)
+        }, 2000);
+    
+        return () => clearTimeout(timer); // Cleanup the timer
+      }, []);
+
+      
 
     const handleUpdate = (user) => {
         setSelectedUser(user);
@@ -69,7 +83,6 @@ const Users = () => {
     };
 
     const handleSave = async (id, updatedData) => {
-        
         try {
             await updateUsers(id, updatedData);
             fetchUsers(); // Re-fetch to ensure UI is up to date
@@ -77,65 +90,109 @@ const Users = () => {
             console.error('Error updating user:', error);
         }
         setModalOpen(false);
-    
     };
 
     const handleDelete = (id) => {
         deleteUsers(id);
     };
 
-    // const handleViewActivity = (id) => {
-    //     fetchUserActivity(id);
-    // };
+   
 
     return (
-        <div className='p-4'>
-            <h2 className="text-2xl font-bold mb-4">User Management</h2>
-            <table className="min-w-full bg-white">
+        <div className='p-6 mt-7 '>
+
+
+            <h2 className="text-xl text-blue-300 font-bold mb-4">User Management</h2>
+
+
+            <table className="table-auto w-full shadow-md bg-white border-collapse border border-gray-200">
+            {loading ? (
+        // Spinner container with centering
+        <div className="flex justify-center items-center absolute inset-0">
+          <Spinner />
+        </div>
+      ) : (
+
+        <>
+        
                 <thead>
-                    <tr>
-                        <th className="py-2 px-7">Name</th>
-                        <th className="py-2 px-7">Email</th>
-                        <th className="py-2 pl-2">Password</th>
-                        <th className="py-2 px-7">Role</th>
-                        {/* <th className="py-2">Actions</th> */}
+                    <tr className="bg-gray-100">
+                        <th className="py-3 px-6 border-b text-left">Name</th>
+                        <th className="py-3 px-6 border-b text-left">Email</th>
+                        {/* <th className="py-3 px-6 border-b text-left">Password</th> */}
+                        <th className="py-3 px-10 border-b text-left">Role</th>
+                        <th className="py-3 px-10 border-b text-left">Actions</th>
                     </tr>
                 </thead>
+               
+
                 <tbody>
                     {Array.isArray(users) && users.length > 0 ? (
-                        users.map(user => (
-                            <tr key={user._id}>
-                                <td className="py-2 px-7">{user.name}</td>
-                                <td className="py-2 px-7">{user.email}</td>
-                                <td className="py-2 pl-2">{user.password}</td>
-                                <td className="py-2 px-7">{user.roles}</td>
-                                <td className="py-2">
-                                <button onClick={() => handleUpdate(user)} className="mr-2 bg-blue-500 text-white px-4 py-2 rounded flex items-center">
-                                        <Pencil1Icon className="mr-1" /> 
-                                </button>
-                                <button onClick={() => handleDelete(user._id)} className="mr-2 bg-red-500 text-white px-4 py-2 rounded flex items-center">
-                                        <TrashIcon className="mr-1" />
-                                    </button>
-                                    {/* <button onClick={() => handleViewActivity(user._id)} className="bg-green-500 text-white px-4 py-2 rounded">
-                                        View Activity
-                                    </button> */}
+                        users.map((user) => (
+                            <tr key={user._id} className="hover:bg-gray-100">
+                                <td className="py-3 px-6 border-b">
+                                    <span
+                                        className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800"
+                                        style={{ backgroundColor: "#DBEAFE" }} // Light blue background as a fallback
+                                    >
+                                        {user.name}
+                                    </span>
+                                </td>
+                                {/* Email */}
+                                <td className="py-3 px-6 border-b">
+                                    <span
+                                        className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-800"
+                                        style={{ backgroundColor: "#D1FAE5" }} // Light green background as a fallback
+                                    >
+                                        {user.email}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-10 border-b">
+                                    <span
+                                        className="bg-yellow-100 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-800"
+                                        style={{ backgroundColor: "#FEF3C7" }} // Light yellow background as a fallback
+                                    >
+                                        {user.roles}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-6 border-b text-center">
+                                    <div className="flex items-center px-8 py-4">
+                                        <Pencil
+                                            size={"16px"}
+                                            className="mr-1 text-blue-500 cursor-pointer hover:text-blue-700"
+                                            onClick={() => handleUpdate(user)}
+                                        />
+                                        <Trash
+                                            size={"16px"}
+                                            className="mr-1 text-red-500 cursor-pointer hover:text-red-700"
+                                            onClick={() => handleDelete(user._id)}
+                                        />
+                                    </div>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5" className="py-2 text-center">No users found</td>
+                            <td colSpan="5" className="py-3 px-6 text-center">
+                                No users found
+                            </td>
                         </tr>
                     )}
                 </tbody>
+        </>    
+      )}
             </table>
 
-            <Modal 
-                isOpen={isModalOpen} 
-                onClose={() => setModalOpen(false)} 
-                onSave={handleSave} 
-                user={selectedUser} 
+
+
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onSave={handleSave}
+                user={selectedUser}
             />
+         
         </div>
     );
 };
