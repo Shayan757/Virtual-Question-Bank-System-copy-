@@ -6,7 +6,7 @@ export default function App({ Component, pageProps }) {
 
 <AdminState>
 
-<Component {...pageProps} />;
+<Component {...pageProps} />
 
 </AdminState>
 
